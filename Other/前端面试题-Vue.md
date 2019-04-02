@@ -69,7 +69,7 @@ new Router({
 
 > MVC
 
-![image](https://github.com/93qlin/webNote/master/Other/images/mvc.png)
+![image](https://github.com/93qlin/webNote/blob/master/Other/images/mvc.png)
 
 特点：
 1. `View` 传送指令到 `Controller`
@@ -80,7 +80,7 @@ new Router({
 
 > MVVM
 
-![image](https://github.com/93qlin/webNote/master/Other/images/mvvm.png)
+![image](https://github.com/93qlin/webNote/blob/master/Other/images/mvvm.png)
 
 特点：
 1. 各部分之间的通信，都是双向的
