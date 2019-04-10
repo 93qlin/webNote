@@ -97,7 +97,7 @@
 
 > Presto内核：Opera7及以上。[Opera内核原为：Presto，现为：Blink;]
 
-> Webkit内核：Safari，Chrome等。[Chrome的：Blink（WebKit的分支）] 
+> Webkit内核：Safari，Chrome等。[Chrome的：Blink（WebKit的分支）]
 
 浏览器内核又可以分成两部分：**渲染引擎和JS引擎。** 渲染引擎主要负责取得网页的内容、整理讯息、计算网页的显示方式等，JS引擎则是解析Javascript语言，执行javascript语言来实现网页的动态效果。
 
@@ -110,7 +110,7 @@
 - 地理定位：`Geolocation`
 - 拖放API：`drag`
 - web worker：是运行在后台的 JavaScript，独立于其他脚本，不会影响页面的性能
-- web storage: `localStorage` `sessionStorage` 
+- web storage: `localStorage` `sessionStorage`
 - WebSocket: HTML5开始提供的一种在单个 TCP 连接上进行全双工通讯的协议
 
 <h5 id='l6'>6. 描述一下 cookie，sessionStorage 和 localStorage 的区别</h5>
@@ -192,9 +192,9 @@ box-sizing: content-box|border-box|inherit:
 - 为父元素添加`overflow:hidden`
 - 伪元素
 ```css
-.fix::after { 
-     content:""; 
-     display:block; 
+.fix::after {
+     content:"";
+     display:block;
      clear:both;
 }
 ```
@@ -207,7 +207,7 @@ box-sizing: content-box|border-box|inherit:
 
 > 定位的方式
 
-```css 
+```css
 .father {
     position: relative;
 }

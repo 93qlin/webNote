@@ -42,6 +42,10 @@
 
 &emsp;[21. vue-router 使用params与query传参有什么区别](#k21)
 
+&emsp;[22. vux](#k22)
+
+
+
 <h5 id='k1'>1. 说一下Vue的双向绑定数据的原理</h5>
 
 > `vue` 实现数据双向绑定主要是：采用数据劫持结合发布者-订阅者模式的方式，通过 `Object.defineProperty()` 来劫持各个属性的 `setter`，`getter`，在数据变动时发布消息给订阅者，触发相应监听回调
@@ -281,3 +285,15 @@ this.$route.query
 
 - `params` 是路由的一部分,必须要有。`query` 是拼接在 `url` 后面的参数，没有也没关系
 - `params` 不设置的时候，刷新页面或者返回参数会丢，`query` 则不会有这个问题
+
+<h5 id='k22'>22. Vue 中 key 的作用</h5>
+- state
+- mutations
+- getters
+- actions
+- modules
+>state里面就是存放的我们上面所提到的状态
+mutations就是存放如何更改状态 **mutations里的操作必须是同步的。**
+getters就是从state中派生出状态，比如将state中的某个状态进行过滤然后获取新的状态getters 和 vue 中的 computed 类似 , 都是用来计算 state 然后生成新的数据 ( 状态 ) 的
+actions就是mutation的加强版，它可以通过commit mutations中的方法来改变状态，多个 state 的操作 , 使用 mutations 会来触发会比较好维护 , 那么需要执行多个 mutations 就需要用 action 了,最重要的是它可以进行 **异步操作**。
+modules顾名思义，就是当用这个容器来装这些状态还是显得混乱的时候，我们就可以把容器分成几块，把状态和管理规则分类来装。这和我们创建js模块是一个目的，让代码结构更清晰。
