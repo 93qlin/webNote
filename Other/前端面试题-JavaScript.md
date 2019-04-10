@@ -50,6 +50,8 @@
 
 &emsp;[24. 对JS引擎执行机制的理解](#j24)
 
+&emsp;[25. 事件流](#j25)
+
 
 <h5 id='j1'>1. JavaScript 有哪些数据类型</h5>
 
@@ -97,7 +99,7 @@ f.constructor == F // true
 
 F.prototype = {a: 1}
 var f = new F
-f.constructor == F // false 
+f.constructor == F // false
 ```
 > 在构造函数 `F.prototype` 没有被重写之前，构造函数 `F` 就是新创建的对象 `f` 的数据类型。当 `F.prototype` 被重写之后，原有的 `constructor` 引用丢失, 默认为 Object
 
@@ -314,7 +316,7 @@ function Animal() {
 }
 function Cat(name, age) {
     Animal.call(this)
-    this.name = name 
+    this.name = name
     this.age = age
 }
 
@@ -349,7 +351,7 @@ ES6新增继承方式，Class 可以通过extends关键字实现继承
 
 ```js
 class Animal {
-    
+
 }
 
 class Cat extends Animal {
@@ -428,7 +430,7 @@ foo() // 2
 
 相同点：三者都可以**改变 this 的指向**
 
-不同点： 
+不同点：
 
 - apply 方法传入两个参数：一个是作为函数上下文的对象，另外一个是作为函数参数所组成的数组
 
@@ -514,7 +516,7 @@ func1(1,2) // xixi 1 2
 
 **AMD和CMD最大的区别是对依赖模块的执行时机处理不同**
 
-> 1、AMD推崇依赖前置，在定义模块的时候就要声明其依赖的模块 
+> 1、AMD推崇依赖前置，在定义模块的时候就要声明其依赖的模块
 
 > 2、CMD推崇就近依赖，只有在用到某个模块的时候再去require
 
@@ -566,7 +568,7 @@ var f = function (v) {
 
 > `Promise` 对象代表一个异步操作，有三种状态：`pending`（进行中）、`fulfilled`（已成功）和 `rejected`（已失败）。只有异步操作的结果，可以决定当前是哪一种状态，任何其他操作都无法改变这个状态
 
-特点： 
+特点：
 
 - 对象的状态不受外界影响
 - 一旦状态改变，就不会再变，任何时候都可以得到这个结果
@@ -692,7 +694,7 @@ f().then(v => console.log(v))
 
 ```js
 console.log(1)
-    
+
 setTimeout(function(){
     console.log(2)
 },0)
@@ -715,9 +717,9 @@ new Promise(function(resolve){
  }).then(function(){
      console.log(3)
  });
- 
+
  console.log(4);
- 
+
  // 2 4 3 1
 ```
 
@@ -725,3 +727,11 @@ new Promise(function(resolve){
 
 参考 [JS引擎的执行机制](https://segmentfault.com/a/1190000012806637)
 
+<h5 id='j25'>25. 事件流</h5>
+事件流分为两种，捕获事件流和冒泡事件流。
+
+- 捕获事件流从根节点开始执行，一直往子节点查找执行，直到查找执行到目标节点。
+
+- 冒泡事件流从目标节点开始执行，一直往父节点冒泡查找执行，直到查到到根节点。
+
+事件流分为三个阶段，一个是捕获节点，一个是处于目标节点阶段，一个是冒泡阶段。
