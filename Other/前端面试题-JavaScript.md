@@ -739,10 +739,13 @@ new Promise(function(resolve){
 
 事件流分为三个阶段，一个是捕获节点，一个是处于目标节点阶段，一个是冒泡阶段。
 
-<h5 id='j26'>26. avascript中的事件循环event-loop</h5>
+<h5 id='j26'>26. avascript中的事件循环event-loop[https://blog.csdn.net/qq_36150631/article/details/88787226]</h5>
+
 <h6>线程</h6>
+
 - javascript是单线程的语言，也就是说，同一个时间只能做一件事
 - why? 假定JavaScript同时有两个线程，一个线程在某个DOM节点上添加内容，另一个线程删除了这个节点，这时浏览器应该以哪个线程为准？
+
 **排队**
 单线程就意味着，所有任务需要排队，前一个任务结束，才会执行后一个任务。如果前一个任务耗时很长，后一个任务就不得不一直等着
 ```
