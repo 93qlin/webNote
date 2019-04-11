@@ -274,7 +274,6 @@ Person() // hello
 
 > 每个构造函数(constructor)都有一个原型对象(prototype),原型对象都包含一个指向构造函数的指针,而实例(instance)都包含一个指向原型对象的内部指针.
 
-![image](https://github.com/93qlin/webNote/blob/master/Other/images/%E5%8E%9F%E5%9E%8B%E5%9B%BE%E7%A4%BA.jpg)
 
 图解：
 - 每一个构造函数都拥有一个`prototype`属性，这个属性指向一个对象，也就是原型对象
@@ -743,7 +742,7 @@ new Promise(function(resolve){
 
 **概括**
 
-事件循环：从代码执行顺序的角度来看，程序最开始是按代码顺序执行代码的，遇到同步任务，立刻执行；遇到异步任务，则只是调用异步函数发起异步请求。此时，异步任务开始执行异步操作，执行完成后到消息队列中排队。程序按照代码顺序执行完毕后，查询消息队列中是否有等待的消息。如果有，则按照次序从消息队列中把消息放到执行栈中执行。执行完毕后，再从消息队列中获取消息，再执行，不断重复。
+事件循环：从代码执行顺序的角度来看，程序最开始是按代码顺序执行代码的，遇到同步任务，立刻执行；遇到异步任务，则只是调用异步函数发起异步请求。此时，异步任务开始执行异步操作，执行完成后到任务队列中排队。程序按照代码顺序执行完毕后，查询任务队列中是否有等待的任务。如果有，则按照次序从任务队列中把任务放到执行栈中执行。执行完毕后，再从任务队列中获取任务，再执行，不断重复。
 
 　　由于主线程不断的重复获得消息、执行消息、再取消息、再执行。所以，这种机制被称为事件循环
 
@@ -842,20 +841,126 @@ setTimeout(() => {
 },1000)
 ```
 
-对于同步任务来说，按顺序执行即可；但是，对于异步任务，各任务执行的时间长短不同，执行完成的时间点也不同，主线程如何调控异步任务呢？这就用到了消息队列
+对于同步任务来说，按顺序执行即可；但是，对于异步任务，各任务执行的时间长短不同，执行完成的时间点也不同，主线程如何调控异步任务呢？这就用到了任务队列
 
-<h6>消息队列</h6>
+<h6>任务队列</h6>
 
-　　有些文章把消息队列称为消息队列，或者叫事件队列，总之是和异步任务相关的队列
+　　有些文章把任务队列称为消息队列，或者叫事件队列，总之是和异步任务相关的队列
 
-　　可以确定的是，它是队列这种先入先出的数据结构，和排队是类似的，哪个异步操作完成的早，就排在前面。不论异步操作何时开始执行，只要异步操作执行完成，就可以到消息队列中排队
+　　可以确定的是，它是队列这种先入先出的数据结构，和排队是类似的，哪个异步操作完成的早，就排在前面。不论异步操作何时开始执行，只要异步操作执行完成，就可以到任务队列中排队
 
-　　这样，主线程在空闲的时候，就可以从消息队列中获取消息并执行
+　　这样，主线程在空闲的时候，就可以从任务队列中获取任务并执行
 
-　　消息队列中放的消息具体是什么东西？消息的具体结构当然跟具体的实现有关。但是为了简单起见，可以认为：消息就是注册异步任务时添加的回调函数
+　　任务队列中放的任务具体是什么东西？任务的具体结构当然跟具体的实现有关。但是为了简单起见，可以认为：任务就是注册异步任务时添加的回调函数
+
+<h6>任务队列的宏任务和微任务</h6>
+
+任务队列的宏任务和微任务JS异步还有一个机制，就是遇到宏任务，先执行宏任务，将宏任务放入event queue，然后再执行微任务，将微任务放入event queue，但是，这两个queue不是一个queue。当你往外拿的时候先从微任务里拿这个回调函数，然后再从宏任务的queue拿宏任务的回调函数，如下图：
+![image](https://github.com/93qlin/webNote/blob/master/JavaScript/image/img2.png)
+
 
 【事件】
 
-　　为什么叫事件循环？而不叫任务循环或消息循环。究其原因是消息队列中的每条消息实际上都对应着一个事件
+　　为什么叫事件循环？而不叫任务循环或消息循环。究其原因是任务队列中的每条消息实际上都对应着一个事件
 
 　　DOM操作对应的是DOM事件，资源加载操作对应的是加载事件，而定时器操作可以看做对应一个“时间到了”的事件
+
+![image](https://github.com/93qlin/webNote/blob/master/JavaScript/image/img1.png)
+如图：
+同步和异步任务分别进入不同的执行“场所”，同步进入主线程，异步进入Event Table并注册函数。当指定的事情完成时，Event Table会将这个函数移入Event Queue。主线程内的任务执行完毕为空，回去了Event Queue读取对应的函数，进入主线程。上述过程会不断重复，也就是常说的Event Loop（事件循环）。
+
+<h6>Event-loop 是如何工作的？</h6>
+
+```
+先看一个简单的示例：
+setTimeout(()=>{
+    console.log("setTimeout1");
+    Promise.resolve().then(data => {
+        console.log(222);
+    });
+});
+setTimeout(()=>{
+    console.log("setTimeout2");
+});
+Promise.resolve().then(data=>{
+    console.log(111);
+});
+```
+
+复制代码思考一下, 运行结果是什么？
+运行结果为:
+
+```
+111
+setTimeout1
+222
+setTimeout2
+```
+
+复制代码我们来看一下为什么？
+我们来详细说明一下, JS引擎是如何执行这段代码的:
+
+>主线程上没有需要执行的代码
+接着遇到setTimeout 0，它的作用是在 0ms 后将回调函数放到宏任务队列中(这个任务在下一次的事件循环中执行)。
+接着遇到setTimeout 0，它的作用是在 0ms 后将回调函数放到宏任务队列中(这个任务在再下一次的事件循环中执行)。
+首先检查微任务队列, 即 microtask队列，发现此队列不为空，执行第一个promise的then回调，输出 '111'。
+此时microtask队列为空，进入下一个事件循环, 检查宏任务队列，发现有 setTimeout的回调函数，立即执行回调函数输出 'setTimeout1',检查microtask 队列，发现队列不为空，执行promise的then回调，输出'222'，microtask队列为空，进入下一个事件循环。
+检查宏任务队列，发现有 setTimeout的回调函数, 立即执行回调函数输出'setTimeout2'。
+
+再思考一下下面代码的执行顺序:
+```
+console.log('script start');
+
+setTimeout(function () {
+    console.log('setTimeout---0');
+}, 0);
+
+setTimeout(function () {
+    console.log('setTimeout---200');
+    setTimeout(function () {
+        console.log('inner-setTimeout---0');
+    });
+    Promise.resolve().then(function () {
+        console.log('promise5');
+    });
+}, 200);
+
+Promise.resolve().then(function () {
+    console.log('promise1');
+}).then(function () {
+    console.log('promise2');
+});
+Promise.resolve().then(function () {
+    console.log('promise3');
+});
+console.log('script end');
+```
+复制代码思考一下, 运行结果是什么？
+运行结果为:
+```
+script start
+script end
+promise1
+promise3
+promise2
+setTimeout---0
+setTimeout---200
+promise5
+inner-setTimeout---0
+```
+复制代码那么为什么？
+我们来详细说明一下, JS引擎是如何执行这段代码的:
+
+> 首先顺序执行完主进程上的同步任务，第一句和最后一句的console.log
+接着遇到setTimeout 0，它的作用是在 0ms 后将回调函数放到宏任务队列中(这个任务在下一次的事件循环中执行)。
+接着遇到setTimeout 200，它的作用是在 200ms 后将回调函数放到宏任务队列中(这个任务在再下一次的事件循环中执行)。
+同步任务执行完之后，首先检查微任务队列, 即 microtask队列，发现此队列不为空，执行第一个promise的then回调，输出 'promise1'，然后执行第二个promise的then回调，输出'promise3'，由于第一个promise的.then()的返回依然是promise，所以第二个.then()会放到microtask队列继续执行，输出 'promise2';
+此时microtask队列为空，进入下一个事件循环, 检查宏任务队列，发现有 setTimeout的回调函数，立即执行回调函数输出 'setTimeout---0',检查microtask 队列，队列为空，进入下一次事件循环.
+检查宏任务队列，发现有 setTimeout的回调函数, 立即执行回调函数输出'setTimeout---200'.
+接着遇到setTimeout 0，它的作用是在 0ms 后将回调函数放到宏任务队列中，检查微任务队列，即 microtask 队列，发现此队列不为空，执行promise的then回调，输出'promise5'。
+此时microtask队列为空，进入下一个事件循环，检查宏任务队列，发现有 setTimeout 的回调函数，立即执行回调函数输出，输出'inner-setTimeout---0'。代码执行结束.
+
+<h6>为什么会需要event-loop?</h6>
+
+> 因为 JavaScript 是单线程的。单线程就意味着，所有任务需要排队，前一个任务结束，才会执行后一个任务。如果前一个任务耗时很长，后一个任务就不得不一直等着。为了协调事件（event），用户交互（user interaction），脚本（script），渲染（rendering），网络（networking）等，用户代理（user agent）必须使用事件循环（event loops）。
+最后有一点需要注意的是：本文介绍的是浏览器的Event-loop，因此在测试验证时，一定要使用浏览器环境进行测试验证，如果使用了node环境，那么结果不一定是如上所说。
